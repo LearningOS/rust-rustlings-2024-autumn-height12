@@ -1,8 +1,9 @@
 /*
-	heap
+	heap 堆
 	This question requires you to implement a binary heap function
+    最小堆中，如果子节点的值小于父节点的值），则交换这两个元素的位置。
 */
-// I AM NOT DONE
+//
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -38,6 +39,16 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.count += 1;
+        self.items.push(value);
+        let mut idx = self.count;
+        while self.parent_idx(idx) > 0 {
+            let pdx = self.parent_idx(idx);
+            if (self.comparator)(&self.items[idx], &self.items[pdx]) {
+                self.items.swap(idx, pdx);
+            }
+            idx = pdx;
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -58,7 +69,17 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+        if self.right_child_idx(idx) > self.count {
+            self.left_child_idx(idx)
+        } else {
+            let ldx = self.left_child_idx(idx);
+            let rdx = self.right_child_idx(idx);
+            if (self.comparator)(&self.items[ldx], &self.items[rdx]) {
+                ldx
+            } else {
+                rdx
+            }
+        }
     }
 }
 
@@ -85,7 +106,25 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+		if self.count == 0 {
+            return None;
+        }
+        let next = Some(self.items.swap_remove(1));
+        self.count -= 1;
+
+        if self.count > 0 {
+            // Heapify Down
+            let mut idx = 1;
+            while self.children_present(idx) {
+                let cdx = self.smallest_child_idx(idx);
+                if !(self.comparator)(&self.items[idx], &self.items[cdx]) {
+                    self.items.swap(idx, cdx);
+                }
+                idx = cdx;
+            }
+        }
+
+        next
     }
 }
 
