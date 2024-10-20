@@ -10,6 +10,7 @@ fn main() {
     let option = Some(12);
     while let Some(x) = option {
         res += x;
+        option = None;
     }
     println!("{}", res);
 }
